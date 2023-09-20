@@ -4,7 +4,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 
 #excepción de timeout en selenium
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, WebDriverException
 
 #para definir que tipo de búsqueda voy a definir para el elemento
 from selenium.webdriver.common.by import By
@@ -54,28 +54,35 @@ def tecnocasa(province, ccaa, town=''):
     urls = []
     while x <=pages:
         if x > 1:
-            if town == '':
-                 browser.get(
-                    f'https://www.tecnocasa.es/venta/inmuebles/{ccaa.lower()}/{province.lower()}.html/pag-{x}'
-                )
+            try:
+                if town == '':
+                    browser.get(
+                        f'https://www.tecnocasa.es/venta/inmuebles/{ccaa.lower()}/{province.lower()}.html/pag-{x}'
+                    )
 
-            else:
-                browser.get(
-                    f'https://www.tecnocasa.es/venta/inmuebles/{ccaa.lower()}/{province.lower()}/{town.lower()}.html/pag-{x}'
-                )
+                else:
+                    browser.get(
+                        f'https://www.tecnocasa.es/venta/inmuebles/{ccaa.lower()}/{province.lower()}/{town.lower()}.html/pag-{x}'
+                    )
+            except WebDriverException:
+                print('URL inválida')
 
             html = browser.page_source
             soup = bs(html, 'lxml')
+
         else:
-            if town == '':
-                browser.get(
-                    f'https://www.tecnocasa.es/venta/inmuebles/{ccaa.lower()}/{province.lower()}.html'
-                )
-            else:
-                browser.get(
-                    f'https://www.tecnocasa.es/venta/inmuebles/{ccaa.lower()}/{province.lower()}/{town.lower()}.html'
-                )
-            
+            try:
+                if town == '':
+                    browser.get(
+                        f'https://www.tecnocasa.es/venta/inmuebles/{ccaa.lower()}/{province.lower()}.html'
+                    )
+                else:
+                    browser.get(
+                        f'https://www.tecnocasa.es/venta/inmuebles/{ccaa.lower()}/{province.lower()}/{town.lower()}.html'
+                    )
+            except WebDriverException:
+                print('URL inválida')
+
             try:
                 wait.until(
                     ec.element_to_be_clickable(
@@ -87,6 +94,7 @@ def tecnocasa(province, ccaa, town=''):
                 ).click()
             except TimeoutException:
                 print('Cookies no aceptadas')
+
             html = browser.page_source
             soup = bs(html, 'lxml')
 
@@ -117,10 +125,15 @@ def tecnocasa(province, ccaa, town=''):
 
 
 def scrapeo_vivienda(url):
-    browser.get(
-        url
-    )
+    try:
+        browser.get(
+            url
+        )
+    except WebDriverException:
+        print('URL inválida')
+
     sleep(randint(3, 5))
+    
     html = browser.page_source
     soup = bs(html, 'lxml')
 
