@@ -4,9 +4,10 @@ import pandas as pd
 
 
 if __name__=='__main__':
+    town = input('Introduzca el municipio: ')
     province = input('Introduzca la provincia: ')
     ccaa = input('Introduzca la comunidad autónoma: ')
-    town = input('Introduzca el municipio: ')
+    
     viviendas = tecnocasa(province, ccaa, town)
     df = pd.DataFrame(viviendas)
     print(df)
